@@ -33,7 +33,7 @@ resource "aws_instance" "ec2nix_server" {
 
   provisioner "local-exec" {
 
-    command     = file("${path.module}/script/test-machine-up.sh")
+    command     = file("${path.module}/script/local_exec_test_machine_up.sh")
     interpreter = ["bash", "-c"]
 
     environment = {
