@@ -53,11 +53,11 @@ variable "volume_type" {
 variable "subnet_id" {}
 variable "vpc_id" {}
 
-variable "aws_ssm_profile" {
-  type        = string
-  default     = ""
-  description = "If EC2 not public this should is AWS_PROFILE with a direct ref. to the real AWS account."
-}
+#variable "aws_ssm_profile" {
+#  type        = string
+#  default     = ""
+#  description = "If EC2 not public this should is AWS_PROFILE with a direct ref. to the real AWS account."
+#}
 
 variable "iam_instance_profile" {}
 variable "instance_type" {}
