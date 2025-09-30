@@ -31,7 +31,7 @@ resource "aws_ebs_snapshot_import" "ec2nix_import" {
     format = "VHD"
     user_bucket {
       s3_bucket = aws_s3_bucket.ec2nix_bucket.id
-      s3_key    = aws_s3_object.image_upload.id
+      s3_key    = "nixos_bootstrap.vhd"
     }
   }
   lifecycle {
