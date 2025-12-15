@@ -29,3 +29,6 @@ override.tf.json
 # example: *tfplan*
 .temp.html 
 .temp.seed
+
+# Swap
+*.sw*
