@@ -29,9 +29,9 @@ for try in {0..100}; do
   if [ "$success" -eq 0 ]; then
     echo "Machine ${INSTANCE_ID} up and ready to for provisioning over SSM/SSH"
     echo ""
-    echo "Add the the systems private key to agenix and run rekey (agenix -r -i PRIVATE_KEY)"
-    cat /etc/ssh/ssh_host_ed25519_key.pub
-    echo
+    #echo "Add the the systems private key to agenix and run rekey (agenix -r -i PRIVATE_KEY)"
+    #cat /etc/ssh/ssh_host_ed25519_key.pub
+    #echo
     cleanup 0
   fi
   sleep 5s

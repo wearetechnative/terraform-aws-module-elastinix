@@ -11,6 +11,7 @@ unset SSH_AUTH_SOCK
 echo
 echo "UPDATE KNOWN HOSTS"
 ssh-keygen -R $(echo $TARGET | sed "s/root@//")
+ssh-keyscan -q $(echo $TARGET | sed "s/root@//") >> ~/.ssh/known_hosts
 
 echo
 echo "NIX-COPY-CLOSURE"
