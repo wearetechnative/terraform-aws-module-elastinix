@@ -8,6 +8,12 @@ variable "ingress_ports" {
   description = "list of ports to allow incoming, (set by Nix)"
 }
 
+variable "ingress_ports_udp" {
+  type        = list(number)
+  default     = []
+  description = "list of UDP ports to allow incoming, (set by Nix)"
+}
+
 variable "ingress_from_to_ports" {
   type = list(object({
     from = number
