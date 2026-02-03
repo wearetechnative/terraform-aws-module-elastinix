@@ -10,6 +10,17 @@ resource "aws_security_group" "ec2nix_security_group" {
   }
 
   dynamic "ingress" {
+    for_each = var.ingress_ports_udp
+
+    content {
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = "udp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+
+  dynamic "ingress" {
     for_each = var.ingress_ports
 
     content {
