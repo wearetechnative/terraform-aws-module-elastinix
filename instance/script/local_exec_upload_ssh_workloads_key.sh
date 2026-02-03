@@ -19,5 +19,7 @@ cd secrets
 SYS_SSH_KEY=$(agenix -d system_sshd_key.age --identity ${HOME}/.ssh/${SSH_KEYFILE_BASE})
 cd ${CURR_DIR}
 
-echo ${SYS_SSH_KEY} | ssh -F ${SSH_CONFIG_FILE} -oStrictHostKeyChecking=no -i ${SSH_ID_FILE} \
-  ${TARGET} 'cat - > /tmp/system_sshd_key && chmod 600 /tmp/system_sshd_key && chown root:root /tmp/system_sshd_key'
+echo "${SYS_SSH_KEY}" | ssh -F ${SSH_CONFIG_FILE} -oStrictHostKeyChecking=no -i ${SSH_ID_FILE} \
+ ${TARGET} 'cat - > /tmp/system_sshd_key && chmod 600 /tmp/system_sshd_key && chown root:root /tmp/system_sshd_key'
+
+
