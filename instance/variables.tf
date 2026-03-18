@@ -91,3 +91,15 @@ variable "aws_account_id" {
   description = "aws account id"
   type        = string
 }
+
+variable "ingress_rules" {
+  description = "ingress rules for security group"
+  type = list(object({
+    from_port = number
+    to_port   = number
+    protocol  = string
+    source    = string
+    name      = string
+  }))
+}
+
