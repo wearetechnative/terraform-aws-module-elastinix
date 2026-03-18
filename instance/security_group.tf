@@ -52,13 +52,13 @@
 # }
 
 
-resource "aws_security_group" "allow_tls" {
+resource "aws_security_group" "ec2nix_security_group" {
   name        = "${var.name}-secgroup"
   description = "Allow TLS inbound traffic and all outbound traffic"
   vpc_id      = var.vpc_id
 }
 
-resource "aws_security_group_rule" "example" {
+resource "aws_security_group_rule" "ec2nix_security_group_ingress_rule" {
   for_each = {
     for rule in var.ingress_rules: 
     rule.name => rule
@@ -68,10 +68,11 @@ resource "aws_security_group_rule" "example" {
   from_port         = each.value.from_port
   to_port           = each.value.to_port
   protocol          = each.value.protocol
-  cidr_blocks       = each.value.source
+  source_security_group_id = each.value.source_security_group_id
+  cidr_blocks = each.value.cidr_blocks
 }
 
-resource "aws_security_group_rule" "allow_all" {
+resource "aws_security_group_rule" "ec2nix_security_group_egress_rule" {
   security_group_id = aws_security_group.allow_tls.id
   type              = "egress"
   to_port           = 0
