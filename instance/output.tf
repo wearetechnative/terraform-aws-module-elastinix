@@ -13,3 +13,8 @@ output "private_ip" {
   value = aws_instance.ec2nix_server.private_ip
 }
 
+output "security_group_id" {
+  value = aws_security_group.ec2nix_security_group.id
+  description = "ID of the security group attached to the instance"
+}
+
