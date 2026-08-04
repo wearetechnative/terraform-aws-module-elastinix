@@ -2,7 +2,8 @@
 
 echo $TARGET >> /tmp/debug-target.txt
 
-AWS_PROFILE=$($SCRIPT_PATH/find_profile.sh $AWS_ACCOUNT_ID)
+AWS_PROFILE=$($SCRIPT_PATH/find_profile.sh $AWS_ACCOUNT_ID) || exit 1
+export AWS_PROFILE
 echo $AWS_PROFILE >> /tmp/debug-target.txt
 
 # TODO replace unset SSH_AUTH_SOCK with -o IdentitiesOnly=yes
@@ -11,7 +12,6 @@ unset SSH_AUTH_SOCK
 echo
 echo "UPDATE KNOWN HOSTS"
 ssh-keygen -R $(echo $TARGET | sed "s/root@//")
-ssh-keyscan -q $(echo $TARGET | sed "s/root@//") >> ~/.ssh/known_hosts
 
 echo
 echo "NIX-COPY-CLOSURE"
@@ -25,4 +25,3 @@ ssh -F $SSH_CONFIG_FILE -i $SSH_ID_FILE -oStrictHostKeyChecking=no $TARGET "$LIV
 echo
 echo "NIX GARBAGE COLLECT"
 ssh -F $SSH_CONFIG_FILE -i $SSH_ID_FILE -oStrictHostKeyChecking=no $TARGET 'nix-collect-garbage'
-

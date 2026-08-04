@@ -5,7 +5,8 @@ echo
 echo "UPDATE KNOWN HOSTS"
 ssh-keygen -R $(echo ${TARGET} | sed "s/root@//")
 
-export AWS_PROFILE=$(${SCRIPT_PATH}/find_profile.sh ${AWS_ACCOUNT_ID})
+AWS_PROFILE=$(${SCRIPT_PATH}/find_profile.sh ${AWS_ACCOUNT_ID}) || exit 1
+export AWS_PROFILE
 
 SSH_KEYFILE_BASE=$(basename $SSH_ID_FILE)
 
@@ -21,5 +22,4 @@ cd ${CURR_DIR}
 
 echo "${SYS_SSH_KEY}" | ssh -F ${SSH_CONFIG_FILE} -oStrictHostKeyChecking=no -i ${SSH_ID_FILE} \
  ${TARGET} 'cat - > /tmp/system_sshd_key && chmod 600 /tmp/system_sshd_key && chown root:root /tmp/system_sshd_key'
-
 
