@@ -12,7 +12,8 @@ resource "null_resource" "upload_ssh_workloads_key" {
       SCRIPT_PATH     = "${path.module}/script"
       SSH_ID_FILE     = var.ssh_id_file
       SSH_CONFIG_FILE = "${path.module}/ssh.conf"
-      TARGET          = var.associate_public_ip_address ? "root@${aws_instance.ec2nix_server.public_ip}" : "root@${aws_instance.ec2nix_server.id}"
+      # TARGET          = var.associate_public_ip_address ? "root@${aws_instance.ec2nix_server.public_ip}" : "root@${aws_instance.ec2nix_server.id}"
+      TARGET          = "root@${aws_instance.ec2nix_server.id}"
     }
   }
 }

@@ -16,7 +16,8 @@ resource "null_resource" "nixos_deployment_ssm" {
       AWS_ACCOUNT_ID  = var.aws_account_id
       SCRIPT_PATH     = "${path.module}/script"
       SSH_CONFIG_FILE  = "${path.module}/ssh.conf"
-      TARGET           = var.associate_public_ip_address ? "root@${aws_instance.ec2nix_server.public_ip}" : "root@${aws_instance.ec2nix_server.id}"
+      # TARGET           = var.associate_public_ip_address ? "root@${aws_instance.ec2nix_server.public_ip}" : "root@${aws_instance.ec2nix_server.id}"
+      TARGET           = "root@${aws_instance.ec2nix_server.id}"
     }
   }
 }
