@@ -10,4 +10,15 @@ if [ -z "$1" ]; then
 fi
 
 ACCOUNT_ID="$1"
-jsonify-aws-dotfiles | jq -r '.config | to_entries[] | select(.value.role_arn != null) | select(.value.role_arn | contains("'"$ACCOUNT_ID"'")) | .key'
+
+for PROFILE in $(aws configure list-profiles); do
+  ROLE_ARN=$(aws configure get role_arn --profile "$PROFILE")
+
+  if [[ "$ROLE_ARN" == *":${ACCOUNT_ID}:"* ]]; then
+    echo "$PROFILE"
+    exit 0
+  fi
+done
+
+echo "No AWS profile found for account ${ACCOUNT_ID}" >&2
+exit 1
