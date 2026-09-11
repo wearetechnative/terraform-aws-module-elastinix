@@ -9,19 +9,21 @@ set +e
 AWS_PROFILE=$($SCRIPT_PATH/find_profile.sh $AWS_ACCOUNT_ID)
 echo $AWS_PROFILE >> /tmp/debug-target.txt
 
+# Select ssh identity (on-disk key vs rbw/agent) -> sets KEYFILE, SSH_I, NIX_SSHOPTS
+source "$SCRIPT_PATH/lib_ssh_identity.sh"
+
 cleanup() {
   exit $!
 }
 
 for try in {0..100}; do
   echo "Polling for machine to come up. Retry #$try"
-  unset SSH_AUTH_SOCK
 
   if [[ -z "${PUBLIC_IP}" ]]; then
-    ssh -F $SSH_CONFIG_FILE -i "$SSH_ID_FILE" -oStrictHostKeyChecking=no "root@$INSTANCE_ID" uptime
+    ssh -F $SSH_CONFIG_FILE ${SSH_I} -oStrictHostKeyChecking=no "root@$INSTANCE_ID" uptime
   else
     ### TODO MAKE CONFIG SWITCH OR ALWAYS USE SSM
-    ssh -F $SSH_CONFIG_FILE -i "$SSH_ID_FILE" -oStrictHostKeyChecking=no "root@$INSTANCE_ID" uptime
+    ssh -F $SSH_CONFIG_FILE ${SSH_I} -oStrictHostKeyChecking=no "root@$INSTANCE_ID" uptime
     #ssh -i "$SSH_ID_FILE" -oStrictHostKeyChecking=no "root@$PUBLIC_IP" uptime
   fi
 
