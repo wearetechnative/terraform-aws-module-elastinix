@@ -1,4 +1,4 @@
-# Terraform AWS [Elastinix] ![](https://img.shields.io/github/actions/workflow/status/wearetechnative/terraform-aws-module-elastinix/tflint.yaml?branch=main&style=plastic)
+# Terraform AWS [Elastinix] ![](https://img.shields.io/github/actions/workflow/status/wearetechnative/terraform-aws-module-elastinix/lint.yaml?branch=main&style=plastic&label=lint) ![](https://img.shields.io/github/actions/workflow/status/wearetechnative/terraform-aws-module-elastinix/security-scan.yaml?branch=main&style=plastic&label=security)
 
 This module implements shared terraform code used by elastinix. 
 
