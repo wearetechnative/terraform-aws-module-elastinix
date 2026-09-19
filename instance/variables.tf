@@ -2,27 +2,6 @@ variable "live_config_path" {
   description = "Path to NixOS configuration (set by Nix"
 }
 
-variable "ingress_ports" {
-  type        = list(number)
-  default     = []
-  description = "list of ports to allow incoming, (set by Nix)"
-}
-
-variable "ingress_ports_udp" {
-  type        = list(number)
-  default     = []
-  description = "list of UDP ports to allow incoming, (set by Nix)"
-}
-
-variable "ingress_from_to_ports" {
-  type = list(object({
-    from = number
-    to   = number
-  }))
-  default     = []
-  description = "List of port ranges to allow incoming traffic (set by Nix)."
-}
-
 variable "ebs_volume_id" {
   type        = string
   default     = ""
@@ -95,12 +74,12 @@ variable "aws_account_id" {
 variable "ingress_rules" {
   description = "ingress rules for security group"
   type = list(object({
-    from_port = number
-    to_port   = number
-    protocol  = string
-    cidr_blocks = optional(list(string))
+    from_port                = number
+    to_port                  = number
+    protocol                 = string
+    cidr_blocks              = optional(list(string))
     source_security_group_id = optional(string)
-    name      = string
+    name                     = string
   }))
 }
 
