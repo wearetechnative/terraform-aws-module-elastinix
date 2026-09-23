@@ -1,5 +1,6 @@
 variable "live_config_path" {
   description = "Path to NixOS configuration (set by Nix"
+  type        = string
 }
 
 variable "ingress_ports" {
@@ -56,8 +57,12 @@ variable "volume_type" {
   default     = "gp3"
 }
 
-variable "subnet_id" {}
-variable "vpc_id" {}
+variable "subnet_id" {
+  type = string
+}
+variable "vpc_id" {
+  type = string
+}
 
 #variable "aws_ssm_profile" {
 #  type        = string
@@ -65,12 +70,22 @@ variable "vpc_id" {}
 #  description = "If EC2 not public this should is AWS_PROFILE with a direct ref. to the real AWS account."
 #}
 
-variable "iam_instance_profile" {}
-variable "instance_type" {}
-variable "name" {}
-variable "availability_zone" {}
+variable "iam_instance_profile" {
+  type = string
+}
+variable "instance_type" {
+  type = string
+}
+variable "name" {
+  type = string
+}
+variable "availability_zone" {
+  type = string
+}
 
-variable "ec2nix_ami_id" {}
+variable "ec2nix_ami_id" {
+  type = string
+}
 
 variable "associate_public_ip_address" {
   type    = bool
