@@ -3,6 +3,22 @@ variable "live_config_path" {
   type        = string
 }
 
+variable "use_substitutes" {
+  description = <<-EOT
+    Pass --use-substitutes to nix-copy-closure, so the target fetches store
+    paths from its own configured substituters and only receives the remainder
+    over SSH.
+
+    Off by default: a host that has no binary cache configured gains nothing,
+    and turning this on for one would be a silent change to its deploys. Only
+    enable it once the target has been deployed conventionally at least once,
+    so its substituter and credentials are already in place - otherwise it is
+    asked to fetch from a cache it cannot authenticate to.
+  EOT
+  type        = bool
+  default     = false
+}
+
 variable "ingress_ports" {
   type        = list(number)
   default     = []

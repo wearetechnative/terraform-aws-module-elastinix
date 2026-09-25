@@ -2,6 +2,10 @@ resource "null_resource" "nixos_deployment_ssm" {
 
   triggers = {
     live_config_path = var.live_config_path
+    # Included so flipping the flag alone redeploys. Without it a switched flag
+    # would sit unused until the closure happened to change, and look like a
+    # setting that does nothing.
+    use_substitutes = var.use_substitutes
   }
 
   provisioner "local-exec" {
@@ -11,13 +15,14 @@ resource "null_resource" "nixos_deployment_ssm" {
 
     environment = {
       LIVE_CONFIG_PATH = var.live_config_path
+      USE_SUBSTITUTES  = var.use_substitutes
       NIX_SSHOPTS      = "-F ${path.module}/ssh.conf -i ${var.ssh_id_file}"
       SSH_ID_FILE      = var.ssh_id_file
-      AWS_ACCOUNT_ID  = var.aws_account_id
-      SCRIPT_PATH     = "${path.module}/script"
+      AWS_ACCOUNT_ID   = var.aws_account_id
+      SCRIPT_PATH      = "${path.module}/script"
       SSH_CONFIG_FILE  = "${path.module}/ssh.conf"
       # TARGET           = var.associate_public_ip_address ? "root@${aws_instance.ec2nix_server.public_ip}" : "root@${aws_instance.ec2nix_server.id}"
-      TARGET           = "root@${aws_instance.ec2nix_server.id}"
+      TARGET = "root@${aws_instance.ec2nix_server.id}"
     }
   }
 }
