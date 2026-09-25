@@ -16,7 +16,15 @@ ssh-keygen -R $(echo $TARGET | sed "s/root@//")
 
 echo
 echo "NIX-COPY-CLOSURE"
-nix-copy-closure $TARGET $LIVE_CONFIG_PATH
+# With USE_SUBSTITUTES=true the target first fetches whatever its own
+# substituters can serve, and only the remainder travels over SSH. Unset or
+# false gives exactly the command this script has always run.
+NIX_COPY_FLAGS=""
+if [ "${USE_SUBSTITUTES:-false}" = "true" ]; then
+  NIX_COPY_FLAGS="--use-substitutes"
+  echo "(using the target's substituters)"
+fi
+nix-copy-closure $NIX_COPY_FLAGS $TARGET $LIVE_CONFIG_PATH
 
 echo
 echo "NIX SWITCH TO NEW CONFIG"
