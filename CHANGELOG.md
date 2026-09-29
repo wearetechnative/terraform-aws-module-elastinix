@@ -2,6 +2,24 @@
 
 ## NEXT VERSION
 
+### Fixed
+
+- **A replaced instance is deployed to again.** `null_resource.nixos_deployment_ssm`
+  and `null_resource.upload_ssh_workloads_key` triggered on `live_config_path`
+  only; the instance id appeared solely as `TARGET` in the provisioner
+  environment, which is not a trigger. Recreating the machine while the closure
+  stayed the same therefore left it running the bootstrap image with no
+  configuration, no secrets and no services -- and the apply reported success.
+  Both resources now carry `instance_id` in their triggers.
+
+  **On upgrade every host redeploys once**, because the trigger map gains a key.
+  That is also the cure for any host currently sitting in that state.
+
+- **The ssh key lands before the switch.** The two local-execs had no ordering
+  between them, and agenix reads `/tmp/system_sshd_key` during activation, so the
+  losing order failed every secret. `nixos_deployment_ssm` now depends on
+  `upload_ssh_workloads_key`.
+
 ### Changed
 
 - **A failed deploy now fails.** `switch-to-configuration` was not the last

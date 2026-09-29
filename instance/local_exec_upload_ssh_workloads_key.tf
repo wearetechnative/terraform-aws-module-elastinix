@@ -1,6 +1,10 @@
 resource "null_resource" "upload_ssh_workloads_key" {
   triggers = {
     live_config_path = var.live_config_path
+    # A replaced instance needs the key again: it lives in /tmp on the host and
+    # goes with the machine. Without this the new instance has no identity for
+    # agenix to decrypt with, and every secret fails at activation.
+    instance_id = aws_instance.ec2nix_server.id
   }
 
   provisioner "local-exec" {
@@ -13,7 +17,7 @@ resource "null_resource" "upload_ssh_workloads_key" {
       SSH_ID_FILE     = var.ssh_id_file
       SSH_CONFIG_FILE = "${path.module}/ssh.conf"
       # TARGET          = var.associate_public_ip_address ? "root@${aws_instance.ec2nix_server.public_ip}" : "root@${aws_instance.ec2nix_server.id}"
-      TARGET          = "root@${aws_instance.ec2nix_server.id}"
+      TARGET = "root@${aws_instance.ec2nix_server.id}"
     }
   }
 }
