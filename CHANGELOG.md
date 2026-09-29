@@ -19,12 +19,18 @@
 
 ### Added
 
-- **Refuse to start when a previous deploy left something behind.** A run that
-  dies leaves a `nix-store --serve` on the target holding a path lock that
+- **Refuse to start when a previous deploy is holding a store path lock.** A run
+  that dies leaves a `nix-store --serve` on the target holding a path lock that
   nothing will release; the next deploy then blocks on it indefinitely with
   nothing in the output to explain why. The script now checks the target first
   and stops with the process, its age, the lock it holds and the command to
   clear it.
+
+  Keyed on the lock, not on the process. A `nix-store --serve` lingering without
+  a lock is ordinary aftermath -- one survives every successful deploy for a
+  minute or two, parented by an sshd-session that has not been reaped -- and
+  blocks nobody. Refusing on its presence would refuse every second deploy in a
+  row.
 
 ## nixos-25.05.1
 

@@ -40,37 +40,40 @@ echo "UPDATE KNOWN HOSTS"
 ssh-keygen -R "${TARGET#root@}" || true
 
 echo
-echo "CHECK FOR A PREVIOUS DEPLOY"
-# `nix-store --serve` is the receiving end of nix-copy-closure. Ours has not
-# started yet, so anything running now belongs to an earlier deploy: either one
-# still in progress, which must not be raced, or one that died and left a
-# process holding a path lock that nothing will ever release.
+echo "CHECK FOR A STUCK PREVIOUS DEPLOY"
+# A run that dies leaves the receiving `nix-store --serve` holding a path lock
+# that nothing will ever release, and the next deploy then blocks on that lock
+# indefinitely with nothing in the output to explain why.
 #
-# Matched on the process name rather than the command line: `pgrep -f` would
-# also match this very check, which is how the problem hid for an afternoon.
+# The lock is the whole point. A `nix-store --serve` lingering with no lock is
+# ordinary aftermath -- one survives every successful deploy for a minute or two,
+# parented by an sshd-session that has not been reaped yet -- and blocks nobody.
+# Refusing on its mere presence would refuse every second deploy in a row.
+#
+# Matched on the process name rather than the command line: `pgrep -f` would also
+# match this very check.
 # shellcheck disable=SC2086,SC2016 # SSH_I is two words; the quoted block runs on the target
-stale=$(timeout 60 ssh -F "$SSH_CONFIG_FILE" ${SSH_I} -oStrictHostKeyChecking=no "$TARGET" '
+stuck=$(timeout 60 ssh -F "$SSH_CONFIG_FILE" ${SSH_I} -oStrictHostKeyChecking=no "$TARGET" '
   for p in $(pgrep -x nix-store 2>/dev/null); do
     tr "\0" " " < /proc/$p/cmdline 2>/dev/null | grep -q -- "--serve" || continue
-    printf "  pid %s  running for %ss  holding: %s\n" \
-      "$p" \
-      "$(ps -o etimes= -p "$p" 2>/dev/null | tr -d " ")" \
-      "$(ls -l /proc/$p/fd 2>/dev/null | grep -o "/nix/store/[^ ]*\.lock" | tr "\n" " ")"
+    locks=$(ls -l /proc/$p/fd 2>/dev/null | grep -o "/nix/store/[^ ]*\.lock" | tr "\n" " ")
+    [ -n "$locks" ] || continue
+    printf "  pid %s  running for %ss  holding %s\n" \
+      "$p" "$(ps -o etimes= -p "$p" 2>/dev/null | tr -d " ")" "$locks"
   done' 2>/dev/null) || {
   echo "(could not check the target; continuing, the copy will report any real problem)"
-  stale=""
+  stuck=""
 }
 
-if [ -n "$stale" ]; then
-  echo "ERROR: the target already has a nix-store --serve from an earlier deploy:" >&2
-  echo "$stale" >&2
+if [ -n "$stuck" ]; then
+  echo "ERROR: an earlier deploy is holding a store path lock on the target:" >&2
+  echo "$stuck" >&2
   cat >&2 <<MSG
 
-Refusing to start. Either another deploy is in progress -- wait for it -- or a
-previous one died and left this behind, in which case it will hold its path lock
-forever and this deploy would hang on it with no explanation.
+Refusing to start, because this deploy would block on that lock and say nothing.
 
-Inspect and, if it is wreckage, clear it:
+Either another deploy is genuinely in progress -- wait for it -- or a previous
+one died and left this behind, in which case the lock is never released.
 
   ssh $TARGET 'ps -o pid,etimes,args -p <pid>'
   ssh $TARGET 'kill <pid>'
