@@ -28,7 +28,7 @@ resource "aws_instance" "ec2nix_server" {
   root_block_device {
     volume_size = var.root_initial_size
     volume_type = var.volume_type
-    encrypted   = var.hibernation ? true : false
+    encrypted   = true
   }
 
   provisioner "local-exec" {
