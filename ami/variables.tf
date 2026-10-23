@@ -16,3 +16,8 @@ variable "aws_account_id" {
   description = "aws account id"
   type = string
 }
+
+variable "kms_key_id" {
+  description = "kms key id for encryption"
+  type = string
+}

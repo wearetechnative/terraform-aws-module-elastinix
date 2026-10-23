@@ -28,6 +28,7 @@ resource "aws_s3_object" "image_upload" {
 resource "aws_ebs_snapshot_import" "ec2nix_import" {
   role_name = aws_iam_role.vmimport_role.id
   encrypted = true
+  kms_key_id = var.kms_key_id
   disk_container {
     format = "VHD"
     user_bucket {
